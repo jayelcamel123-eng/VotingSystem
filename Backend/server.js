@@ -1,5 +1,6 @@
 const express = require('express')
 const cors = require('cors')
+const cookieParser = require('cookie-parser')
 require('dotenv').config()
 const pool = require('./config/db')
 const authRoutes = require('./routes/authRoutes')
@@ -17,13 +18,21 @@ const app = express()
 app.use(
   cors({
     origin: true,
-    credentials: false,
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 )
 
+app.use(cookieParser())
 app.use(express.json({ limit: '1mb' }))
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff')
+  res.setHeader('X-Frame-Options', 'DENY')
+  res.setHeader('Referrer-Policy', 'no-referrer')
+  res.setHeader('X-XSS-Protection', '0')
+  next()
+})
 
 app.get('/', (req, res) =>
   res.json({

@@ -1,8 +1,9 @@
 const bcrypt = require('bcrypt')
 const pool = require('../config/db')
+const { normalizeText, normalizeVoterId, parseGrade, validateGrade } = require('../utils/validators')
 
-const normalize = (value) => String(value ?? '').trim()
-const parseGrade = (value) => Number(value)
+const normalize = normalizeText
+const parseGradeValue = parseGrade
 
 async function getVoters(req, res) {
   try {
@@ -98,11 +99,11 @@ async function createVoter(req, res) {
   const client = await pool.connect()
 
   try {
-    const voterId = normalize(req.body?.voter_id).toUpperCase()
+    const voterId = normalizeVoterId(req.body?.voter_id)
 
     const name = normalize(req.body?.name)
 
-    const grade = parseGrade(req.body?.grade)
+    const grade = parseGradeValue(req.body?.grade)
 
     const section = normalize(req.body?.section)
 
@@ -122,10 +123,12 @@ async function createVoter(req, res) {
       })
     }
 
-    if (!Number.isInteger(grade) || grade < 7 || grade > 12) {
-      return res.status(400).json({
+    try {
+      validateGrade(grade)
+    } catch (error) {
+      return res.status(error.status || 400).json({
         success: false,
-        message: 'Grade must be a whole number from 7 to 12.',
+        message: error.message,
       })
     }
 
@@ -255,11 +258,11 @@ async function updateVoter(req, res) {
   const client = await pool.connect()
 
   try {
-    const voterId = normalize(req.params.id).toUpperCase()
+    const voterId = normalizeVoterId(req.params.id)
 
     const name = normalize(req.body?.name)
 
-    const grade = parseGrade(req.body?.grade)
+    const grade = parseGradeValue(req.body?.grade)
 
     const section = normalize(req.body?.section)
 
@@ -279,10 +282,12 @@ async function updateVoter(req, res) {
       })
     }
 
-    if (!Number.isInteger(grade) || grade < 7 || grade > 12) {
-      return res.status(400).json({
+    try {
+      validateGrade(grade)
+    } catch (error) {
+      return res.status(error.status || 400).json({
         success: false,
-        message: 'Grade must be a whole number from 7 to 12.',
+        message: error.message,
       })
     }
 

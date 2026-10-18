@@ -1,23 +1,17 @@
 const pool = require('../config/db')
-const clean = (v) => String(v ?? '').trim()
+const { normalizeText, validateElectionDates } = require('../utils/validators')
 
 function dates(body) {
-  const name = clean(body?.election_name),
-    description = clean(body?.description)
-  const start = new Date(body?.start_date),
-    end = new Date(body?.end_date)
+  const name = normalizeText(body?.election_name)
+  const description = normalizeText(body?.description)
+
   if (!name)
     throw Object.assign(new Error('Election name is required.'), {
       status: 400,
     })
-  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()))
-    throw Object.assign(new Error('Valid start and end dates are required.'), {
-      status: 400,
-    })
-  if (end <= start)
-    throw Object.assign(new Error('End date must be later than start date.'), {
-      status: 400,
-    })
+
+  const { start, end } = validateElectionDates(body?.start_date, body?.end_date)
+
   return { name, description, start, end }
 }
 

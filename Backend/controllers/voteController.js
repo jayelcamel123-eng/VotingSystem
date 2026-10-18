@@ -1,17 +1,26 @@
 const pool = require('../config/db')
+const { normalizeVoterId, validateSelectionList } = require('../utils/validators')
 
 async function castVote(req, res) {
   const client = await pool.connect()
   try {
-    const voterId = String(req.body?.voter_id || '')
-      .trim()
-      .toUpperCase()
+    const voterId = normalizeVoterId(req.body?.voter_id)
     const electionId = Number(req.body?.election_id)
-    const selections = Array.isArray(req.body?.selections) ? req.body.selections : []
-    if (!voterId || !Number.isInteger(electionId) || !selections.length)
+
+    let selections = []
+    try {
+      selections = validateSelectionList(req.body?.selections)
+    } catch (error) {
+      return res.status(error.status || 400).json({
+        success: false,
+        message: error.message,
+      })
+    }
+
+    if (!voterId || !Number.isInteger(electionId))
       return res.status(400).json({
         success: false,
-        message: 'Voter, election, and at least one selection are required.',
+        message: 'Voter and election are required.',
       })
     if (req.auth.user.role === 'voter' && req.auth.voter?.voter_id !== voterId)
       return res.status(403).json({
@@ -58,15 +67,7 @@ async function castVote(req, res) {
       })
     }
 
-    const posIds = selections.map((x) => Number(x.position_id))
-    const uniquePos = new Set(posIds)
-    if (uniquePos.size !== posIds.length) {
-      await client.query('ROLLBACK')
-      return res.status(400).json({
-        success: false,
-        message: 'Only one candidate may be selected for each position.',
-      })
-    }
+    const posIds = selections.map((x) => x.position_id)
 
     const positions = (
       await client.query(

@@ -1,4 +1,7 @@
-const API_BASE = 'http://localhost:5000/api'
+const API_BASE =
+  (typeof window !== 'undefined' && window.__APP_CONFIG__ && window.__APP_CONFIG__.API_BASE) ||
+  'http://localhost:5000/api'
+
 function apiUrl(path) {
   return `${API_BASE}${path}`
 }
@@ -11,7 +14,11 @@ function authHeaders(extra = {}) {
 }
 
 async function authFetch(url, options = {}) {
-  const opts = { ...options, headers: authHeaders(options.headers || {}) }
+  const opts = {
+    ...options,
+    credentials: 'include',
+    headers: authHeaders(options.headers || {}),
+  }
   const response = await fetch(url, opts)
   if (response.status === 401) {
     localStorage.removeItem('isLoggedIn')

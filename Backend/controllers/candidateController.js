@@ -1,6 +1,5 @@
 const pool = require('../config/db')
-const clean = (v) => String(v ?? '').trim()
-const gradeValue = (v) => (v === null || v === undefined || v === '' ? null : Number(v))
+const { normalizeText, parseGrade, validateGrade } = require('../utils/validators')
 
 async function getCandidates(req, res) {
   try {
@@ -24,11 +23,11 @@ async function getCandidates(req, res) {
 }
 
 async function validateCandidate(body) {
-  const candidateName = clean(body?.candidate_name),
-    positionId = Number(body?.position_id),
-    electionId = Number(body?.election_id),
-    grade = gradeValue(body?.grade),
-    partyName = clean(body?.party_name)
+  const candidateName = normalizeText(body?.candidate_name)
+  const positionId = Number(body?.position_id)
+  const electionId = Number(body?.election_id)
+  const grade = parseGrade(body?.grade)
+  const partyName = normalizeText(body?.party_name)
   if (!candidateName)
     throw Object.assign(new Error('Candidate name is required.'), {
       status: 400,
@@ -57,13 +56,9 @@ async function validateCandidate(body) {
     throw Object.assign(new Error('Selected election does not exist.'), {
       status: 400,
     })
-  if (
-    pos.rows[0].position_name.toLowerCase() === 'grade representative' &&
-    (!Number.isInteger(grade) || grade < 7 || grade > 12)
-  )
-    throw Object.assign(new Error('Grade Representative requires a grade from 7 to 12.'), {
-      status: 400,
-    })
+  if (pos.rows[0].position_name.toLowerCase() === 'grade representative') {
+    validateGrade(grade, { min: 7, max: 12 })
+  }
   if (pos.rows[0].position_name.toLowerCase() !== 'grade representative' && grade !== null)
     throw Object.assign(new Error('Only Grade Representative candidates may have a grade.'), {
       status: 400,

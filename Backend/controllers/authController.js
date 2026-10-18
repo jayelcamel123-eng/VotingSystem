@@ -108,6 +108,13 @@ async function login(req, res) {
     const user = { user_id: account.user_id, username: account.username, role: account.role }
     const token = createSession(user, voter)
 
+    res.cookie('authToken', token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 8 * 60 * 60 * 1000,
+    })
+
     if (account.role === 'voter') {
       await pool.query(
         `INSERT INTO activity_logs
@@ -140,6 +147,11 @@ async function login(req, res) {
 
 function logout(req, res) {
   revokeSession(req.authToken)
+  res.clearCookie('authToken', {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+  })
   res.json({ success: true, message: 'Logged out successfully.' })
 }
 

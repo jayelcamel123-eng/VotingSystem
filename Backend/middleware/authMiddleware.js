@@ -103,11 +103,18 @@ function isAdminSessionActive() {
   return true
 }
 
-function requireAuth(req, res, next) {
+function getTokenFromRequest(req) {
   const header = req.headers.authorization || ''
 
-  const token = header.startsWith('Bearer ') ? header.slice(7) : null
+  if (header.startsWith('Bearer ')) {
+    return header.slice(7)
+  }
 
+  return req.cookies?.authToken || null
+}
+
+function requireAuth(req, res, next) {
+  const token = getTokenFromRequest(req)
   const session = getSession(token)
 
   if (!session) {
