@@ -1,258 +1,170 @@
-let currentBallotData = null;
-
+let currentBallotData = null
 
 /* =========================================================
    CURRENT LOGGED VOTER
 ========================================================= */
 
 function currentLoggedVoter() {
-    try {
-        return JSON.parse(
-            localStorage.getItem('currentVoter') || 'null'
-        );
-    } catch {
-        return null;
-    }
+  try {
+    return JSON.parse(localStorage.getItem('currentVoter') || 'null')
+  } catch {
+    return null
+  }
 }
-
 
 /* =========================================================
    SET VOTER HEADER
 ========================================================= */
 
 function setVoterHeader(voter) {
+  const name = document.getElementById('loggedVoterName')
+  const id = document.getElementById('loggedVoterID')
 
-    const name = document.getElementById('loggedVoterName');
-    const id = document.getElementById('loggedVoterID');
+  if (name) {
+    name.textContent = voter?.name || 'Voter'
+  }
 
-    if (name) {
-        name.textContent = voter?.name || 'Voter';
-    }
-
-    if (id) {
-        id.textContent = voter?.voter_id || '—';
-    }
+  if (id) {
+    id.textContent = voter?.voter_id || '—'
+  }
 }
-
 
 /* =========================================================
    LOAD VOTER DASHBOARD
 ========================================================= */
 
 async function loadVoterDashboard() {
+  const voter = currentLoggedVoter()
 
-    const voter = currentLoggedVoter();
+  if (!voter) {
+    return
+  }
 
-    if (!voter) {
-        return;
-    }
+  setVoterHeader(voter)
 
-    setVoterHeader(voter);
+  try {
+    const data = await apiJson(`/votes/ballot/${encodeURIComponent(voter.voter_id)}`)
 
-    try {
-
-        const data = await apiJson(
-            `/votes/ballot/${encodeURIComponent(voter.voter_id)}`
-        );
-
-
-        /* ---------------------------------------------
+    /* ---------------------------------------------
            UPDATE VOTER DATA
         --------------------------------------------- */
 
-        if (data.voter) {
+    if (data.voter) {
+      localStorage.setItem('currentVoter', JSON.stringify(data.voter))
 
-            localStorage.setItem(
-                'currentVoter',
-                JSON.stringify(data.voter)
-            );
+      setVoterHeader(data.voter)
+    }
 
-            setVoterHeader(data.voter);
-        }
-
-
-        /* ---------------------------------------------
+    /* ---------------------------------------------
            CURRENT ELECTION
         --------------------------------------------- */
 
-        const title =
-            document.getElementById('currentElectionTitle');
+    const title = document.getElementById('currentElectionTitle')
+    const status = document.getElementById('currentElectionStatus')
+    const message = document.getElementById('voterConnectionMessage')
 
-        const status =
-            document.getElementById('currentElectionStatus');
+    if (data.election) {
+      if (title) {
+        title.textContent = data.election.election_name
+      }
 
-        const message =
-            document.getElementById('voterConnectionMessage');
+      if (status) {
+        status.textContent = String(data.election.status).toUpperCase()
 
+        status.className =
+          'badge ' + (data.election.status === 'ongoing' ? 'badge-green' : 'badge-yellow')
+      }
 
-        if (data.election) {
+      if (message && navigator.onLine) {
+        message.textContent =
+          data.election.status === 'ongoing'
+            ? 'You are connected. Voting is open.'
+            : 'The election is not currently open for voting.'
+      }
+    } else {
+      if (title) {
+        title.textContent = 'No active election'
+      }
 
-            if (title) {
-                title.textContent =
-                    data.election.election_name;
-            }
+      if (status) {
+        status.textContent = 'NO ACTIVE ELECTION'
 
+        status.className = 'badge badge-yellow'
+      }
+    }
 
-            if (status) {
-
-                status.textContent =
-                    String(
-                        data.election.status
-                    ).toUpperCase();
-
-                status.className =
-                    'badge ' +
-                    (
-                        data.election.status === 'ongoing'
-                            ? 'badge-green'
-                            : 'badge-yellow'
-                    );
-            }
-
-
-            if (message && navigator.onLine) {
-
-                message.textContent =
-                    data.election.status === 'ongoing'
-                        ? 'You are connected. Voting is open.'
-                        : 'The election is not currently open for voting.';
-            }
-
-        } else {
-
-            if (title) {
-                title.textContent =
-                    'No active election';
-            }
-
-            if (status) {
-
-                status.textContent =
-                    'NO ACTIVE ELECTION';
-
-                status.className =
-                    'badge badge-yellow';
-            }
-        }
-
-
-        /* ---------------------------------------------
+    /* ---------------------------------------------
            ELECTION RESULTS
         --------------------------------------------- */
 
-        renderVoterElectionResults(data);
+    renderVoterElectionResults(data)
+  } catch (e) {
+    console.warn('Voter dashboard load:', e.message)
 
+    const results = document.getElementById('voterElectionResults')
 
-    } catch (e) {
-
-        console.warn(
-            'Voter dashboard load:',
-            e.message
-        );
-
-
-        const results =
-            document.getElementById(
-                'voterElectionResults'
-            );
-
-        if (results) {
-
-            results.innerHTML = `
+    if (results) {
+      results.innerHTML = `
                 <div class="voter-results-empty">
                     Unable to load election results.
                 </div>
-            `;
-        }
+            `
     }
+  }
 
-
-    updateVoterConnection();
+  updateVoterConnection()
 }
-
 
 /* =========================================================
    RENDER VOTER ELECTION RESULTS
 ========================================================= */
 
 function renderVoterElectionResults(data) {
+  const summary = document.getElementById('voterResultSummary')
+  const results = document.getElementById('voterElectionResults')
 
-    const summary =
-        document.getElementById(
-            'voterResultSummary'
-        );
+  if (!results) {
+    return
+  }
 
-    const results =
-        document.getElementById(
-            'voterElectionResults'
-        );
-
-
-    if (!results) {
-        return;
-    }
-
-
-    /* ---------------------------------------------
+  /* ---------------------------------------------
        NO CURRENT ELECTION
     --------------------------------------------- */
 
-    if (!data || !data.election) {
+  if (!data || !data.election) {
+    if (summary) {
+      summary.innerHTML = ''
+    }
 
-        if (summary) {
-            summary.innerHTML = '';
-        }
-
-        results.innerHTML = `
+    results.innerHTML = `
             <div class="voter-results-empty">
                 There is no active election at the moment.
             </div>
-        `;
+        `
 
-        return;
-    }
+    return
+  }
 
-
-    /*
+  /*
        The backend will provide:
 
        data.resultSummary
        data.results
     */
 
+  const resultSummary = data.resultSummary || {}
+  const resultData = Array.isArray(data.results) ? data.results : []
 
-    const resultSummary =
-        data.resultSummary || {};
-
-    const resultData =
-        Array.isArray(data.results)
-            ? data.results
-            : [];
-
-
-    /* ---------------------------------------------
+  /* ---------------------------------------------
        SUMMARY
     --------------------------------------------- */
 
-    if (summary) {
+  if (summary) {
+    const registeredVoters = Number(resultSummary.registeredVoters || 0)
+    const votesCast = Number(resultSummary.votesCast || 0)
+    const turnout = Number(resultSummary.turnout || 0)
 
-        const registeredVoters =
-            Number(
-                resultSummary.registeredVoters || 0
-            );
-
-        const votesCast =
-            Number(
-                resultSummary.votesCast || 0
-            );
-
-        const turnout =
-            Number(
-                resultSummary.turnout || 0
-            );
-
-
-        summary.innerHTML = `
+    summary.innerHTML = `
 
             <div class="voter-result-summary-card">
                 <h4>Registered Voters</h4>
@@ -275,93 +187,67 @@ function renderVoterElectionResults(data) {
                 </strong>
             </div>
 
-        `;
-    }
+        `
+  }
 
-
-    /* ---------------------------------------------
+  /* ---------------------------------------------
        NO RESULTS
     --------------------------------------------- */
 
-    if (!resultData.length) {
-
-        results.innerHTML = `
+  if (!resultData.length) {
+    results.innerHTML = `
             <div class="voter-results-empty">
                 No election results are available yet.
             </div>
-        `;
+        `
 
-        return;
-    }
+    return
+  }
 
-
-    /* ---------------------------------------------
+  /* ---------------------------------------------
        GROUP RESULTS BY POSITION
     --------------------------------------------- */
 
-    const groups = {};
+  const groups = {}
 
+  resultData.forEach((item) => {
+    const positionId = item.position_id
 
-    resultData.forEach(item => {
+    if (!groups[positionId]) {
+      groups[positionId] = {
+        position_id: positionId,
 
-        const positionId =
-            item.position_id;
+        position_name: item.position_name,
 
-        if (!groups[positionId]) {
+        candidates: [],
+      }
+    }
 
-            groups[positionId] = {
+    groups[positionId].candidates.push(item)
+  })
 
-                position_id:
-                    positionId,
-
-                position_name:
-                    item.position_name,
-
-                candidates: []
-
-            };
-        }
-
-
-        groups[positionId].candidates.push(item);
-
-    });
-
-
-    /* ---------------------------------------------
+  /* ---------------------------------------------
        BUILD HTML
     --------------------------------------------- */
 
-    results.innerHTML =
-        Object.values(groups)
-            .map(group => {
-
-                return `
+  results.innerHTML = Object.values(groups)
+    .map((group) => {
+      return `
 
                     <div class="voter-result-position">
 
                         <h3>
-                            ${escapeHTML(
-                                group.position_name
-                            )}
+                            ${escapeHTML(group.position_name)}
                         </h3>
 
 
                         ${group.candidates
-                            .map(candidate => {
+                          .map((candidate) => {
+                            const votes = Number(candidate.vote_count || 0)
 
-                                const votes =
-                                    Number(
-                                        candidate.vote_count || 0
-                                    );
+                            const percentage = Number(candidate.percentage || 0)
 
-                                const percentage =
-                                    Number(
-                                        candidate.percentage || 0
-                                    );
-
-
-                                return `
+                            return `
 
                                     <div class="voter-result-candidate">
 
@@ -370,15 +256,12 @@ function renderVoterElectionResults(data) {
                                             <div>
 
                                                 <div class="voter-result-candidate-name">
-                                                    ${escapeHTML(
-                                                        candidate.candidate_name
-                                                    )}
+                                                    ${escapeHTML(candidate.candidate_name)}
                                                 </div>
 
                                                 <div class="voter-result-party">
                                                     ${escapeHTML(
-                                                        candidate.party_name ||
-                                                        'Independent'
+                                                      candidate.party_name || 'Independent'
                                                     )}
                                                 </div>
 
@@ -406,11 +289,8 @@ function renderVoterElectionResults(data) {
                                             <div
                                                 class="voter-result-progress-bar"
                                                 style="width:${Math.max(
-                                                    0,
-                                                    Math.min(
-                                                        100,
-                                                        percentage
-                                                    )
+                                                  0,
+                                                  Math.min(100, percentage)
                                                 )}%"
                                             ></div>
 
@@ -418,95 +298,55 @@ function renderVoterElectionResults(data) {
 
                                     </div>
 
-                                `;
-
-                            })
-                            .join('')}
+                                `
+                          })
+                          .join('')}
 
                     </div>
 
-                `;
-
-            })
-            .join('');
+                `
+    })
+    .join('')
 }
-
 
 /* =========================================================
    LOAD BALLOT
 ========================================================= */
 
 async function loadBallot() {
+  const voter = currentLoggedVoter()
 
-    const voter =
-        currentLoggedVoter();
+  if (!voter) {
+    return
+  }
 
-    if (!voter) {
-        return;
-    }
+  const container = document.getElementById('ballotContainer')
 
-
-    const container =
-        document.getElementById(
-            'ballotContainer'
-        );
-
-
-    if (container) {
-
-        container.innerHTML = `
+  if (container) {
+    container.innerHTML = `
             <div class="card">
                 <p>Loading ballot...</p>
             </div>
-        `;
-    }
+        `
+  }
 
+  try {
+    const data = await apiJson(`/votes/ballot/${encodeURIComponent(voter.voter_id)}`)
 
-    try {
+    currentBallotData = data
 
-        const data =
-            await apiJson(
-                `/votes/ballot/${encodeURIComponent(
-                    voter.voter_id
-                )}`
-            );
+    localStorage.setItem('cachedBallot', JSON.stringify(data))
 
+    renderBallot(data)
+  } catch (e) {
+    const cached = JSON.parse(localStorage.getItem('cachedBallot') || 'null')
 
-        currentBallotData = data;
+    if (cached) {
+      currentBallotData = cached
 
-
-        localStorage.setItem(
-            'cachedBallot',
-            JSON.stringify(data)
-        );
-
-
-        renderBallot(data);
-
-
-    } catch (e) {
-
-        const cached =
-            JSON.parse(
-                localStorage.getItem(
-                    'cachedBallot'
-                ) || 'null'
-            );
-
-
-        if (cached) {
-
-            currentBallotData =
-                cached;
-
-            renderBallot(
-                cached,
-                true
-            );
-
-        } else if (container) {
-
-            container.innerHTML = `
+      renderBallot(cached, true)
+    } else if (container) {
+      container.innerHTML = `
                 <div class="card">
 
                     <p>
@@ -514,41 +354,28 @@ async function loadBallot() {
                     </p>
 
                     <small>
-                        ${escapeHTML(
-                            e.message
-                        )}
+                        ${escapeHTML(e.message)}
                     </small>
 
                 </div>
-            `;
-        }
+            `
     }
+  }
 }
-
 
 /* =========================================================
    RENDER BALLOT
 ========================================================= */
 
-function renderBallot(
-    data,
-    offline = false
-) {
+function renderBallot(data, offline = false) {
+  const container = document.getElementById('ballotContainer')
 
-    const container =
-        document.getElementById(
-            'ballotContainer'
-        );
+  if (!container) {
+    return
+  }
 
-
-    if (!container) {
-        return;
-    }
-
-
-    if (!data.election) {
-
-        container.innerHTML = `
+  if (!data.election) {
+    container.innerHTML = `
             <div class="card">
 
                 <h3>
@@ -561,18 +388,13 @@ function renderBallot(
                 </p>
 
             </div>
-        `;
+        `
 
-        return;
-    }
+    return
+  }
 
-
-    if (
-        data.voter?.voting_status ===
-        'voted'
-    ) {
-
-        container.innerHTML = `
+  if (data.voter?.voting_status === 'voted') {
+    container.innerHTML = `
             <div class="card">
 
                 <h3>
@@ -585,77 +407,50 @@ function renderBallot(
                 </p>
 
             </div>
-        `;
+        `
 
-        return;
+    return
+  }
+
+  const voterGrade = Number(data.voter.grade)
+
+  const groups = {}
+
+  ;(data.candidates || []).forEach((c) => {
+    if (
+      String(c.position_name).toLowerCase() === 'grade representative' &&
+      Number(c.grade) !== voterGrade
+    ) {
+      return
     }
 
+    ;(groups[c.position_id] ||= {
+      position_id: c.position_id,
 
-    const voterGrade =
-        Number(
-            data.voter.grade
-        );
+      position_name: c.position_name,
 
+      candidates: [],
+    }).candidates.push(c)
+  })
 
-    const groups = {};
-
-
-    (data.candidates || [])
-        .forEach(c => {
-
-            if (
-                String(
-                    c.position_name
-                ).toLowerCase() ===
-                'grade representative' &&
-                Number(c.grade) !==
-                voterGrade
-            ) {
-
-                return;
-            }
-
-
-            (
-                groups[c.position_id] ||=
-                {
-                    position_id:
-                        c.position_id,
-
-                    position_name:
-                        c.position_name,
-
-                    candidates: []
-                }
-            )
-                .candidates
-                .push(c);
-
-        });
-
-
-    const html =
-        Object.values(groups)
-            .map(group => `
+  const html = Object.values(groups)
+    .map(
+      (group) => `
 
                 <div class="ballot-position">
 
                     <h3>
                         ${
-                            group.position_name ===
-                            'Grade Representative'
-
-                                ? `Grade ${voterGrade} Representative`
-
-                                : escapeHTML(
-                                    group.position_name
-                                )
+                          group.position_name === 'Grade Representative'
+                            ? `Grade ${voterGrade} Representative`
+                            : escapeHTML(group.position_name)
                         }
                     </h3>
 
 
                     ${group.candidates
-                        .map(c => `
+                      .map(
+                        (c) => `
 
                             <label class="ballot-option">
 
@@ -669,9 +464,7 @@ function renderBallot(
                                 <div>
 
                                     <strong>
-                                        ${escapeHTML(
-                                            c.candidate_name
-                                        )}
+                                        ${escapeHTML(c.candidate_name)}
                                     </strong>
 
                                     <p
@@ -680,33 +473,29 @@ function renderBallot(
                                             color:#78857d;
                                         "
                                     >
-                                        ${escapeHTML(
-                                            c.party_name ||
-                                            'Independent'
-                                        )}
+                                        ${escapeHTML(c.party_name || 'Independent')}
                                     </p>
 
                                 </div>
 
                             </label>
 
-                        `)
-                        .join('')}
+                        `
+                      )
+                      .join('')}
 
                 </div>
 
-            `)
-            .join('');
+            `
+    )
+    .join('')
 
-
-    container.innerHTML = `
+  container.innerHTML = `
 
         <div class="ballot-header">
 
             <h2>
-                ${escapeHTML(
-                    data.election.election_name
-                )}
+                ${escapeHTML(data.election.election_name)}
             </h2>
 
             <p
@@ -722,9 +511,8 @@ function renderBallot(
 
 
         ${
-            offline
-
-                ? `
+          offline
+            ? `
                     <div class="offline-notice">
                         📡 Offline mode:
                         this is a cached ballot.
@@ -732,8 +520,7 @@ function renderBallot(
                         and synced when you reconnect.
                     </div>
                 `
-
-                : ''
+            : ''
         }
 
 
@@ -759,259 +546,128 @@ function renderBallot(
             ← Back to Dashboard
         </button>
 
-    `;
+    `
 }
-
 
 /* =========================================================
    CONNECTION STATUS
 ========================================================= */
 
 function updateVoterConnection() {
+  const online = navigator.onLine
+  const mode = document.getElementById('voterMode')
+  const card = document.getElementById('voterModeCard')
+  const msg = document.getElementById('voterConnectionMessage')
 
-    const online =
-        navigator.onLine;
+  if (mode) {
+    mode.textContent = online ? '● Online' : '● Offline'
 
+    mode.className = online ? 'badge mode-online' : 'badge mode-offline'
+  }
 
-    const mode =
-        document.getElementById(
-            'voterMode'
-        );
+  if (card) {
+    card.textContent = online ? 'Online Mode' : 'Offline Mode'
 
+    card.className = online ? 'badge mode-online' : 'badge mode-offline'
+  }
 
-    const card =
-        document.getElementById(
-            'voterModeCard'
-        );
+  if (msg) {
+    msg.textContent = online
+      ? 'You are connected.'
+      : 'You are offline. Cached voting data may be used.'
+  }
 
+  const notice = document.getElementById('offlineNotice')
 
-    const msg =
-        document.getElementById(
-            'voterConnectionMessage'
-        );
+  if (notice) {
+    notice.style.display = online ? 'none' : 'block'
+  }
 
-
-    if (mode) {
-
-        mode.textContent =
-            online
-                ? '● Online'
-                : '● Offline';
-
-        mode.className =
-            online
-                ? 'badge mode-online'
-                : 'badge mode-offline';
-    }
-
-
-    if (card) {
-
-        card.textContent =
-            online
-                ? 'Online Mode'
-                : 'Offline Mode';
-
-        card.className =
-            online
-                ? 'badge mode-online'
-                : 'badge mode-offline';
-    }
-
-
-    if (msg) {
-
-        msg.textContent =
-            online
-                ? 'You are connected.'
-                : 'You are offline. Cached voting data may be used.';
-    }
-
-
-    const notice =
-        document.getElementById(
-            'offlineNotice'
-        );
-
-
-    if (notice) {
-
-        notice.style.display =
-            online
-                ? 'none'
-                : 'block';
-    }
-
-
-    if (online) {
-        syncOfflineVotes();
-    }
+  if (online) {
+    syncOfflineVotes()
+  }
 }
-
 
 /* =========================================================
    ONLINE / OFFLINE EVENTS
 ========================================================= */
 
-window.addEventListener(
-    'online',
-    () => {
+window.addEventListener('online', () => {
+  updateVoterConnection()
+  loadVoterDashboard()
+})
 
-        updateVoterConnection();
-        loadVoterDashboard();
-
-    }
-);
-
-
-window.addEventListener(
-    'offline',
-    updateVoterConnection
-);
-
+window.addEventListener('offline', updateVoterConnection)
 
 /* =========================================================
    OPEN BALLOT
 ========================================================= */
 
 async function openVoterBallot() {
+  const voter = currentLoggedVoter()
 
-    const voter =
-        currentLoggedVoter();
+  if (!voter) {
+    return
+  }
 
+  if (voter.voting_status === 'voted') {
+    alert('You have already submitted your ballot.')
 
-    if (!voter) {
-        return;
-    }
+    return
+  }
 
+  document.getElementById('voterDashboard')?.setAttribute('style', 'display:none;')
 
-    if (
-        voter.voting_status ===
-        'voted'
-    ) {
+  const ballot = document.getElementById('voterBallot')
 
-        alert(
-            'You have already submitted your ballot.'
-        );
+  if (ballot) {
+    ballot.style.display = 'block'
+  }
 
-        return;
-    }
+  if (navigator.onLine) {
+    await loadBallot()
+  } else {
+    const cached = JSON.parse(localStorage.getItem('cachedBallot') || 'null')
 
+    if (cached) {
+      currentBallotData = cached
 
-    document
-        .getElementById(
-            'voterDashboard'
-        )
-        ?.setAttribute(
-            'style',
-            'display:none;'
-        );
-
-
-    const ballot =
-        document.getElementById(
-            'voterBallot'
-        );
-
-
-    if (ballot) {
-        ballot.style.display =
-            'block';
-    }
-
-
-    if (navigator.onLine) {
-
-        await loadBallot();
-
+      renderBallot(cached, true)
     } else {
-
-        const cached =
-            JSON.parse(
-                localStorage.getItem(
-                    'cachedBallot'
-                ) || 'null'
-            );
-
-
-        if (cached) {
-
-            currentBallotData =
-                cached;
-
-            renderBallot(
-                cached,
-                true
-            );
-
-        } else {
-
-            renderBallot({
-                election: null
-            });
-
-        }
+      renderBallot({
+        election: null,
+      })
     }
+  }
 }
-
 
 /* =========================================================
    CLOSE BALLOT
 ========================================================= */
 
 function closeVoterBallot() {
+  const ballot = document.getElementById('voterBallot')
+  const dash = document.getElementById('voterDashboard')
 
-    const ballot =
-        document.getElementById(
-            'voterBallot'
-        );
+  if (ballot) {
+    ballot.style.display = 'none'
+  }
 
-
-    const dash =
-        document.getElementById(
-            'voterDashboard'
-        );
-
-
-    if (ballot) {
-        ballot.style.display =
-            'none';
-    }
-
-
-    if (dash) {
-        dash.style.display =
-            'block';
-    }
+  if (dash) {
+    dash.style.display = 'block'
+  }
 }
-
 
 /* =========================================================
    PAGE LOAD
 ========================================================= */
 
-document.addEventListener(
-    'DOMContentLoaded',
-    () => {
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('voterDashboard')) {
+    loadVoterDashboard()
+  }
 
-        if (
-            document.getElementById(
-                'voterDashboard'
-            )
-        ) {
-
-            loadVoterDashboard();
-        }
-
-
-        if (
-            document.getElementById(
-                'ballotContainer'
-            )
-        ) {
-
-            loadBallot();
-        }
-
-    }
-);
+  if (document.getElementById('ballotContainer')) {
+    loadBallot()
+  }
+})

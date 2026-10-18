@@ -1,14 +1,12 @@
-const pool = require("../config/db");
+const pool = require('../config/db')
 
 async function getResults(req, res) {
   try {
-    let electionId = req.query.election_id
-      ? Number(req.query.election_id)
-      : null;
+    let electionId = req.query.election_id ? Number(req.query.election_id) : null
 
-    const grade = req.query.grade ? String(req.query.grade).trim() : "";
+    const grade = req.query.grade ? String(req.query.grade).trim() : ''
 
-    const section = req.query.section ? String(req.query.section).trim() : "";
+    const section = req.query.section ? String(req.query.section).trim() : ''
 
     // Get default election if no election_id was provided
     if (!electionId) {
@@ -24,9 +22,9 @@ async function getResults(req, res) {
                     END,
                     start_date DESC
                 LIMIT 1
-            `);
+            `)
 
-      electionId = r.rows[0]?.election_id || null;
+      electionId = r.rows[0]?.election_id || null
     }
 
     if (!electionId) {
@@ -39,56 +37,54 @@ async function getResults(req, res) {
           totalVoters: 0,
           turnout: 0,
         },
-      });
+      })
     }
 
     // Get election
     const election = (
-      await pool.query("SELECT * FROM elections WHERE election_id = $1", [
-        electionId,
-      ])
-    ).rows[0];
+      await pool.query('SELECT * FROM elections WHERE election_id = $1', [electionId])
+    ).rows[0]
 
     if (!election) {
       return res.status(404).json({
         success: false,
-        message: "Election not found.",
-      });
+        message: 'Election not found.',
+      })
     }
 
     // Build voter filter
-    const voterConditions = [`v.status = 'active'`, `v.archived_at IS NULL`];
+    const voterConditions = [`v.status = 'active'`, `v.archived_at IS NULL`]
 
-    const voterParams = [];
-    let paramIndex = 1;
+    const voterParams = []
+    let paramIndex = 1
 
     if (grade) {
-      voterParams.push(grade);
-      voterConditions.push(`v.grade::text = $${paramIndex}`);
-      paramIndex++;
+      voterParams.push(grade)
+      voterConditions.push(`v.grade::text = $${paramIndex}`)
+      paramIndex++
     }
 
     if (section) {
-      voterParams.push(section);
-      voterConditions.push(`v.section = $${paramIndex}`);
-      paramIndex++;
+      voterParams.push(section)
+      voterConditions.push(`v.section = $${paramIndex}`)
+      paramIndex++
     }
 
     // Candidate results
-    const resultParams = [electionId];
-    let resultVoterFilter = "";
+    const resultParams = [electionId]
+    let resultVoterFilter = ''
 
     if (grade || section) {
-      const filterParts = [];
+      const filterParts = []
 
       if (grade) {
-        resultParams.push(grade);
-        filterParts.push(`voter_filter.grade::text = $${resultParams.length}`);
+        resultParams.push(grade)
+        filterParts.push(`voter_filter.grade::text = $${resultParams.length}`)
       }
 
       if (section) {
-        resultParams.push(section);
-        filterParts.push(`voter_filter.section = $${resultParams.length}`);
+        resultParams.push(section)
+        filterParts.push(`voter_filter.section = $${resultParams.length}`)
       }
 
       resultVoterFilter = `
@@ -96,15 +92,11 @@ async function getResults(req, res) {
                     SELECT 1
                     FROM voters voter_filter
                     WHERE voter_filter.voter_id = v.voter_id
-                    ${
-                      filterParts.length
-                        ? `AND ${filterParts.join(" AND ")}`
-                        : ""
-                    }
+                    ${filterParts.length ? `AND ${filterParts.join(' AND ')}` : ''}
                     AND voter_filter.status = 'active'
                     AND voter_filter.archived_at IS NULL
                 )
-            `;
+            `
     }
 
     const results = (
@@ -145,9 +137,9 @@ async function getResults(req, res) {
                     votes DESC,
                     c.candidate_name
                 `,
-        resultParams,
+        resultParams
       )
-    ).rows;
+    ).rows
 
     // Registered voters
     const voters = (
@@ -155,28 +147,28 @@ async function getResults(req, res) {
         `
                 SELECT COUNT(*)::int AS total
                 FROM voters v
-                WHERE ${voterConditions.join(" AND ")}
+                WHERE ${voterConditions.join(' AND ')}
                 `,
-        voterParams,
+        voterParams
       )
-    ).rows[0].total;
+    ).rows[0].total
 
     // Voters who actually voted
-    const votedParams = [electionId];
-    const votedConditions = [`votes.election_id = $1`];
+    const votedParams = [electionId]
+    const votedConditions = [`votes.election_id = $1`]
 
-    let votedParamIndex = 2;
+    let votedParamIndex = 2
 
     if (grade) {
-      votedParams.push(grade);
-      votedConditions.push(`v.grade::text = $${votedParamIndex}`);
-      votedParamIndex++;
+      votedParams.push(grade)
+      votedConditions.push(`v.grade::text = $${votedParamIndex}`)
+      votedParamIndex++
     }
 
     if (section) {
-      votedParams.push(section);
-      votedConditions.push(`v.section = $${votedParamIndex}`);
-      votedParamIndex++;
+      votedParams.push(section)
+      votedConditions.push(`v.section = $${votedParamIndex}`)
+      votedParamIndex++
     }
 
     const voted = (
@@ -188,15 +180,15 @@ async function getResults(req, res) {
                 JOIN voters v
                     ON v.voter_id = votes.voter_id
 
-                WHERE ${votedConditions.join(" AND ")}
+                WHERE ${votedConditions.join(' AND ')}
                   AND v.status = 'active'
                   AND v.archived_at IS NULL
                 `,
-        votedParams,
+        votedParams
       )
-    ).rows[0].total;
+    ).rows[0].total
 
-    const turnout = voters ? Number(((voted / voters) * 100).toFixed(1)) : 0;
+    const turnout = voters ? Number(((voted / voters) * 100).toFixed(1)) : 0
 
     res.json({
       success: true,
@@ -207,17 +199,17 @@ async function getResults(req, res) {
         totalVoters: voters,
         turnout,
       },
-    });
+    })
   } catch (e) {
-    console.error(e);
+    console.error(e)
 
     res.status(500).json({
       success: false,
-      message: "Failed to load election results.",
-    });
+      message: 'Failed to load election results.',
+    })
   }
 }
 
 module.exports = {
   getResults,
-};
+}

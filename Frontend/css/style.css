@@ -39,7 +39,9 @@ textarea {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: radial-gradient(circle at top left, #dff8e6, transparent 35%), linear-gradient(135deg, #f8fff9, #e9f8ed);
+  background:
+    radial-gradient(circle at top left, #dff8e6, transparent 35%),
+    linear-gradient(135deg, #f8fff9, #e9f8ed);
   padding: 20px;
 }
 
@@ -57,7 +59,7 @@ textarea {
 
 .login-left {
   width: 50%;
-  background: linear-gradient(145deg, rgba(8,122,60,0.88), rgba(7,92,45,0.92));
+  background: linear-gradient(145deg, rgba(8, 122, 60, 0.88), rgba(7, 92, 45, 0.92));
   color: white;
   padding: 60px;
   display: flex;
@@ -136,7 +138,7 @@ textarea {
 
 .form-group input:focus {
   border-color: var(--green);
-  box-shadow: 0 0 0 3px rgba(8,122,60,.1);
+  box-shadow: 0 0 0 3px rgba(8, 122, 60, 0.1);
 }
 
 .password-wrapper {
@@ -201,7 +203,7 @@ textarea {
   font-weight: bold;
   font-size: 16px;
   cursor: pointer;
-  transition: .2s;
+  transition: 0.2s;
 }
 
 .login-btn:hover {
@@ -290,7 +292,9 @@ textarea {
 }
 
 .main {
-  background-image: linear-gradient(rgba(245, 247, 246, 0.72), rgba(245, 247, 246, 0.72)), url('../assets/logos/SNHS Logo.jpg');
+  background-image:
+    linear-gradient(rgba(245, 247, 246, 0.72), rgba(245, 247, 246, 0.72)),
+    url('../assets/logos/SNHS Logo.jpg');
   background-position: center center;
   background-repeat: no-repeat;
   background-size: 52%;
@@ -322,7 +326,7 @@ textarea {
   height: 44px;
   border-radius: 12px;
   overflow: hidden;
-  background: rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -369,7 +373,7 @@ textarea {
 
 .menu-item:hover,
 .menu-item.active {
-  background: rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.12);
   color: white;
 }
 
@@ -381,7 +385,7 @@ textarea {
   border: none;
   border-radius: 9px;
   padding: 12px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: white;
   font-weight: bold;
   cursor: pointer;
@@ -483,7 +487,7 @@ textarea {
 }
 
 .welcome::after {
-  content: "🗳️";
+  content: '🗳️';
   position: absolute;
   right: 26px;
   top: 16px;
@@ -506,7 +510,7 @@ textarea {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
 }
 
 .stat-info p {
@@ -812,7 +816,9 @@ td {
 #voterApp {
   display: block;
   min-height: 100vh;
-  background-image: linear-gradient(rgba(245, 247, 246, 0.74), rgba(245, 247, 246, 0.74)), url('../assets/logos/SNHS Logo.jpg');
+  background-image:
+    linear-gradient(rgba(245, 247, 246, 0.74), rgba(245, 247, 246, 0.74)),
+    url('../assets/logos/SNHS Logo.jpg');
   background-position: center center;
   background-repeat: no-repeat;
   background-size: 52%;

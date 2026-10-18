@@ -1,4 +1,4 @@
-const pool = require("../config/db");
+const pool = require('../config/db')
 
 async function getRecentActivity(req, res) {
   try {
@@ -13,22 +13,22 @@ async function getRecentActivity(req, res) {
             FROM activity_logs
             ORDER BY created_at DESC
             LIMIT 1000
-        `);
+        `)
 
     res.json({
       success: true,
       activities: result.rows,
-    });
+    })
   } catch (error) {
-    console.error("Activity log error:", error);
+    console.error('Activity log error:', error)
 
     res.status(500).json({
       success: false,
-      message: "Failed to load recent activity.",
-    });
+      message: 'Failed to load recent activity.',
+    })
   }
 }
 
 module.exports = {
   getRecentActivity,
-};
+}

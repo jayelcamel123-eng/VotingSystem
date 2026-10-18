@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -17,8 +17,8 @@
           </h1>
 
           <p>
-            A modern platform for managing voters, candidates, elections,
-            voting transactions, and election results.
+            A modern platform for managing voters, candidates, elections, voting transactions, and
+            election results.
           </p>
 
           <div class="login-features">
@@ -31,10 +31,20 @@
 
         <div class="login-right">
           <div class="login-type">
-            <button type="button" id="adminLoginBtn" class="login-type-btn active" onclick="setLoginType('admin')">
+            <button
+              type="button"
+              id="adminLoginBtn"
+              class="login-type-btn active"
+              onclick="setLoginType('admin')"
+            >
               🔐 Admin Login
             </button>
-            <button type="button" id="voterLoginBtn" class="login-type-btn" onclick="setLoginType('voter')">
+            <button
+              type="button"
+              id="voterLoginBtn"
+              class="login-type-btn"
+              onclick="setLoginType('voter')"
+            >
               👤 Voter Login
             </button>
           </div>
@@ -49,8 +59,24 @@
               <label>Password</label>
               <div class="password-wrapper">
                 <input type="password" id="password" placeholder="Enter password" required />
-                <button type="button" class="show-password" onclick="togglePassword()" id="eyeButton" aria-label="Show password">
-                  <svg id="eyeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <button
+                  type="button"
+                  class="show-password"
+                  onclick="togglePassword()"
+                  id="eyeButton"
+                  aria-label="Show password"
+                >
+                  <svg
+                    id="eyeIcon"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
                     <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path>
                     <circle cx="12" cy="12" r="3"></circle>
                   </svg>
@@ -77,9 +103,7 @@
             <span id="connectionText">Checking connection...</span>
           </div>
 
-          <div class="login-footer">
-            <strong>SNHS</strong> Election System © 2026
-          </div>
+          <div class="login-footer"><strong>SNHS</strong> Election System © 2026</div>
         </div>
       </div>
     </div>

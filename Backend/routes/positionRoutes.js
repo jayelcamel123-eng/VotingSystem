@@ -1,1 +1,9 @@
-const express=require('express');const {getPositions}=require('../controllers/positionController');const {requireAuth}=require('../middleware/authMiddleware');const router=express.Router();router.get('/',requireAuth,getPositions);module.exports=router;
+const express = require('express')
+const { getPositions } = require('../controllers/positionController')
+const { requireAuth } = require('../middleware/authMiddleware')
+
+const router = express.Router()
+
+router.get('/', requireAuth, getPositions)
+
+module.exports = router
