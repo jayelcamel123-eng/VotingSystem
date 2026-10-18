@@ -1,0 +1,54 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+Backend/.env
+Frontend/.env
+
+# NODE.JS DEPENDENCIES
+node_modules/
+Frontend/node_modules/
+Backend/node_modules/
+
+# LOG FILES
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+
+# BUILD OUTPUTS
+dist/
+build/
+coverage/
+.next/
+out/
+
+# EDITOR / OPERATING SYSTEM
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# PYTHON (IF USED)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# LOCAL DATABASE / BACKUP FILES
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.backup
+*.bak
+
+# TEMPORARY FILES
+*.tmp
+*.temp
+*.swp
+*.swo

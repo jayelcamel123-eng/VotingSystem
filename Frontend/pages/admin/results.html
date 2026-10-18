@@ -1,0 +1,19 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Election Results</title><link rel="stylesheet" href="../../css/style.css"></head><body><div id="app" style="display:block"><aside class="sidebar" id="sidebar"><div class="sidebar-logo"><div class="sidebar-logo-icon"><img src="../../assets/logos/SNHS Logo.jpg" alt="SNHS Logo"></div><h2>Election System</h2></div><div class="sidebar-menu"><div class="menu-title">Main Menu</div><button class="menu-item" onclick="location.href='dashboard.html'">📊 Dashboard</button><button class="menu-item" onclick="location.href='voters.html'">👥 Voters</button><button class="menu-item" onclick="location.href='candidates.html'">🧑 Candidates</button><button class="menu-item" onclick="location.href='elections.html'">🗳️ Elections</button><button class="menu-item active" onclick="location.href='results.html'">📈 Results</button></div><button class="logout" onclick="adminLogout()">🚪 Logout</button></aside><main class="main"><header class="topbar"><div style="display:flex;align-items:center;gap:15px"><button class="mobile-menu" onclick="toggleSidebar()">☰</button><h1 class="page-title">Election Results</h1></div><div class="top-right"><div class="system-status"><span class="dot"></span><span id="topStatus">Online</span></div><div class="admin-profile"><div class="avatar">A</div><span class="admin-name">Administrator</span></div></div></header><div class="content"><section class="page active"><div class="card"><div class="card-header"><h3>Election Results</h3><span id="resultElectionStatus" class="badge badge-green">LOADING</span></div><div class="form-group">
+    <label>Election</label>
+    <select id="resultsElection"></select>
+</div>
+
+<div class="form-group">
+    <label>Grade</label>
+    <select id="resultsGrade">
+        <option value="">All Grades</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label>Section</label>
+    <select id="resultsSection" disabled>
+        <option value="">All Sections</option>
+    </select>
+</div>
+<div id="resultsContainer"></div><div class="stats"><div class="stat-card"><div class="stat-info"><p>Registered Voters</p><h3 id="registeredVotersResult">0</h3></div><div class="stat-icon">👥</div></div><div class="stat-card"><div class="stat-info"><p>Votes Cast</p><h3 id="votesCastResult">0</h3></div><div class="stat-icon">🗳️</div></div><div class="stat-card"><div class="stat-info"><p>Turnout</p><h3 id="turnoutResult">0%</h3></div><div class="stat-icon">📊</div></div></div></section></div></main></div><script src="../../js/api.js"></script><script src="../../js/storage.js"></script><script src="../../js/main.js"></script><script src="../../js/auth.js"></script><script src="../../js/admin.js"></script><script src="../../js/admin-extra.js"></script></body></html>

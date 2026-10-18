@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Election Management</title>
+    <link rel="stylesheet" href="../../css/style.css" />
+  </head>
+  <body>
+    <div id="app" style="display:block;">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-icon">
+            <img src="../../assets/logos/SNHS Logo.jpg" alt="SNHS Logo" />
+          </div>
+          <h2>Election System</h2>
+        </div>
+
+        <div class="sidebar-menu">
+          <div class="menu-title">Main Menu</div>
+          <button class="menu-item" onclick="location.href='dashboard.html'">📊 Dashboard</button>
+          <button class="menu-item" onclick="location.href='voters.html'">👥 Voters</button>
+          <button class="menu-item" onclick="location.href='candidates.html'">🧑 Candidates</button>
+          <button class="menu-item active" onclick="location.href='elections.html'">🗳️ Elections</button>
+          <button class="menu-item" onclick="location.href='results.html'">📈 Results</button>
+
+          
+        </div>
+
+        <button class="logout" onclick="adminLogout()">🚪 Logout</button>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div style="display:flex;align-items:center;gap:15px;">
+            <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
+            <h1 class="page-title">Election Management</h1>
+          </div>
+          <div class="top-right">
+            <div class="system-status"><span class="dot"></span><span id="topStatus">Online</span></div>
+            <div class="admin-profile">
+              <div class="avatar">A</div>
+              <span class="admin-name">Administrator</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="content">
+          <section class="page active" id="elections">
+            <div class="card">
+              <div class="card-header">
+                <h3>Election Management</h3>
+                <div style="display:flex;gap:8px"><button class="btn" onclick="toggleArchive('electionArchive')">View Archive</button><button class="btn btn-primary" onclick="openModal('electionModal')">+ Create Election</button></div>
+              </div>
+            </div>
+
+            <div class="election-grid" id="electionGrid">
+              <div class="election-card">
+                <h3>Loading elections...</h3>
+              </div>
+            </div>
+          <div class="card" id="electionArchive" style="display:none;margin-top:20px"><div class="card-header"><h3>Election Archive</h3><button class="btn" onclick="toggleArchive('electionArchive')">Close Archive</button></div><div id="electionArchiveGrid" class="election-grid"></div></div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <div class="modal" id="electionModal">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3>Create Election</h3>
+          <button class="close" onclick="closeModal('electionModal')">×</button>
+        </div>
+
+        <div class="modal-group">
+          <label>Election Name</label>
+          <input id="electionName" placeholder="Enter election name" />
+        </div>
+
+        <div class="modal-group">
+          <label>Description</label>
+          <textarea id="electionDescription" rows="4" placeholder="Election description"></textarea>
+        </div>
+
+        <div class="modal-group">
+          <label>Start Date</label>
+          <input type="date" id="startDate" />
+        </div>
+
+        <div class="modal-group">
+          <label>End Date</label>
+          <input type="date" id="endDate" />
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn" onclick="closeModal('electionModal')">Cancel</button>
+          <button class="btn btn-primary" onclick="createElection()">Create Election</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="editElectionModal">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3>Edit Election</h3>
+          <button class="close" type="button" onclick="closeModal('editElectionModal')">×</button>
+        </div>
+
+        <input type="hidden" id="editElectionId" />
+
+        <div class="modal-group">
+          <label>Election Name</label>
+          <input id="editElectionName" placeholder="Enter election name" />
+        </div>
+
+        <div class="modal-group">
+          <label>Description</label>
+          <textarea id="editElectionDescription" rows="4" placeholder="Election description"></textarea>
+        </div>
+
+        <div class="modal-group">
+          <label>Start Date</label>
+          <input type="date" id="editStartDate" />
+        </div>
+
+        <div class="modal-group">
+          <label>End Date</label>
+          <input type="date" id="editEndDate" />
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn" type="button" onclick="closeModal('editElectionModal')">Cancel</button>
+          <button class="btn btn-primary" type="button" onclick="updateElection()">Update Election</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="../../js/api.js"></script>
+    <script src="../../js/storage.js"></script>
+    <script src="../../js/main.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/admin.js"></script>
+  </body>
+</html>

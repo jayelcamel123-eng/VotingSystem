@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voter Dashboard</title>
+
+    <link rel="stylesheet" href="../../css/style.css" />
+
+    <style>
+      .voter-results-section {
+        margin-top: 24px;
+      }
+
+      .voter-results-header {
+        margin-bottom: 18px;
+      }
+
+      .voter-results-header h2 {
+        margin-bottom: 6px;
+      }
+
+      .voter-results-header p {
+        color: #78857d;
+        margin: 0;
+      }
+
+      .voter-result-summary {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .voter-result-summary-card {
+        background: #ffffff;
+        border: 1px solid #e5e9e7;
+        border-radius: 12px;
+        padding: 18px;
+      }
+
+      .voter-result-summary-card h4 {
+        margin: 0 0 8px;
+        color: #78857d;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .voter-result-summary-card strong {
+        font-size: 24px;
+      }
+
+      .voter-result-position {
+        background: #ffffff;
+        border: 1px solid #e5e9e7;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 18px;
+      }
+
+      .voter-result-position h3 {
+        margin: 0 0 18px;
+      }
+
+      .voter-result-candidate {
+        padding: 14px 0;
+        border-bottom: 1px solid #edf0ee;
+      }
+
+      .voter-result-candidate:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+
+      .voter-result-candidate:first-child {
+        padding-top: 0;
+      }
+
+      .voter-result-candidate-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        align-items: flex-start;
+      }
+
+      .voter-result-candidate-name {
+        font-weight: 700;
+      }
+
+      .voter-result-party {
+        color: #78857d;
+        font-size: 12px;
+        margin-top: 4px;
+      }
+
+      .voter-result-votes {
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      .voter-result-votes strong {
+        font-size: 16px;
+      }
+
+      .voter-result-percentage {
+        color: #78857d;
+        font-size: 12px;
+        margin-top: 3px;
+      }
+
+      .voter-result-progress {
+        width: 100%;
+        height: 8px;
+        background: #edf0ee;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-top: 10px;
+      }
+
+      .voter-result-progress-bar {
+        height: 100%;
+        width: 0%;
+        border-radius: 999px;
+        background: #198754;
+        transition: width 0.3s ease;
+      }
+
+      .voter-results-empty {
+        background: #ffffff;
+        border: 1px solid #e5e9e7;
+        border-radius: 12px;
+        padding: 24px;
+        text-align: center;
+        color: #78857d;
+      }
+
+      @media (max-width: 768px) {
+        .voter-result-summary {
+          grid-template-columns: 1fr;
+        }
+
+        .voter-result-candidate-top {
+          flex-direction: column;
+        }
+
+        .voter-result-votes {
+          text-align: left;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="voterApp" style="display:block;">
+
+      <!-- TOP BAR -->
+      <header class="voter-topbar">
+        <div class="voter-brand">
+          <div class="voter-brand-icon">🗳️</div>
+
+          <div>
+            <strong>Student Voting Portal</strong>
+
+            <div style="font-size:12px;color:#78857d;">
+              Web-Based Election System
+            </div>
+          </div>
+        </div>
+
+        <div class="voter-user">
+          <div id="voterMode" class="badge mode-online">
+            ● Online
+          </div>
+
+          <button
+            class="btn btn-danger"
+            onclick="voterLogout()"
+          >
+            Logout
+          </button>
+        </div>
+      </header>
+
+
+      <!-- VOTER DASHBOARD -->
+      <div id="voterDashboard" class="voter-content">
+
+        <!-- WELCOME -->
+        <div class="voter-welcome">
+          <h2>
+            Welcome,
+            <span id="loggedVoterName">Voter</span>
+            👋
+          </h2>
+
+          <p>
+            Voter ID:
+            <strong id="loggedVoterID">—</strong>
+          </p>
+
+          <br />
+
+          <p id="voterConnectionMessage">
+            Checking connection...
+          </p>
+        </div>
+
+
+        <!-- DASHBOARD CARDS -->
+        <div class="voter-cards">
+
+          <!-- CAST YOUR VOTE -->
+          <div class="voter-card">
+            <h3>🗳️ Cast Your Vote</h3>
+
+            <p>
+              Vote for your preferred candidates in the Student Council Election 2026.
+            </p>
+
+            <button
+              class="btn btn-primary"
+              onclick="openVoterBallot()"
+            >
+              Open Ballot
+            </button>
+          </div>
+
+
+          <!-- CURRENT ELECTION -->
+          <div class="voter-card">
+            <h3>📅 Current Election</h3>
+
+            <p>
+              <strong id="currentElectionTitle">
+                Checking...
+              </strong>
+            </p>
+
+            <p>
+              Status:
+              <span
+                id="currentElectionStatus"
+                class="badge badge-yellow"
+              >
+                LOADING
+              </span>
+            </p>
+          </div>
+
+
+          <!-- VOTING MODE -->
+          <div class="voter-card">
+            <h3>🌐 Voting Mode</h3>
+
+            <p>
+              The system automatically detects your Internet connection.
+            </p>
+
+            <span
+              id="voterModeCard"
+              class="badge mode-online"
+            >
+              Online Mode
+            </span>
+          </div>
+
+        </div>
+
+
+        <!-- ELECTION RESULTS -->
+        <div class="voter-results-section">
+
+          <div class="voter-results-header">
+            <h2>📊 Election Results</h2>
+
+            <p>
+              Current election results
+            </p>
+          </div>
+
+
+          <!-- RESULT SUMMARY -->
+          <div
+            id="voterResultSummary"
+            class="voter-result-summary"
+          >
+          </div>
+
+
+          <!-- RESULTS -->
+          <div id="voterElectionResults">
+
+            <div class="voter-results-empty">
+              Loading election results...
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- VOTER BALLOT -->
+      <div
+        id="voterBallot"
+        class="voter-content"
+        style="display:none;"
+      >
+
+        <div
+          id="offlineNotice"
+          class="offline-notice"
+          style="display:none;"
+        >
+          📡 You are offline. Your cached ballot may be submitted and synchronized when you reconnect.
+        </div>
+
+        <div id="ballotContainer">
+          <div class="card">
+            <p>Loading ballot...</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+    <script src="../../js/api.js"></script>
+    <script src="../../js/storage.js"></script>
+    <script src="../../js/main.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/voter.js"></script>
+    <script src="../../js/voting.js"></script>
+
+  </body>
+</html>

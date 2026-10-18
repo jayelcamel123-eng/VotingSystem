@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Candidate Management</title>
+    <link rel="stylesheet" href="../../css/style.css" />
+  </head>
+  <body>
+    <div id="app" style="display:block;">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-icon">
+            <img src="../../assets/logos/SNHS Logo.jpg" alt="SNHS Logo" />
+          </div>
+          <h2>Election System</h2>
+        </div>
+
+        <div class="sidebar-menu">
+          <div class="menu-title">Main Menu</div>
+          <button class="menu-item" onclick="location.href='dashboard.html'">📊 Dashboard</button>
+          <button class="menu-item" onclick="location.href='voters.html'">👥 Voters</button>
+          <button class="menu-item active" onclick="location.href='candidates.html'">🧑 Candidates</button>
+          <button class="menu-item" onclick="location.href='elections.html'">🗳️ Elections</button>
+          <button class="menu-item" onclick="location.href='results.html'">📈 Results</button>
+
+          
+        </div>
+
+        <button class="logout" onclick="adminLogout()">🚪 Logout</button>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div style="display:flex;align-items:center;gap:15px;">
+            <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
+            <h1 class="page-title">Candidate Management</h1>
+          </div>
+          <div class="top-right">
+            <div class="system-status"><span class="dot"></span><span id="topStatus">Online</span></div>
+            <div class="admin-profile">
+              <div class="avatar">A</div>
+              <span class="admin-name">Administrator</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="content">
+          <section class="page active" id="candidates">
+            <div class="card">
+              <div class="card-header">
+                <h3>Candidate Management</h3>
+                <div style="display:flex;gap:8px"><button class="btn" onclick="toggleArchive('candidateArchive')">View Archive</button><button class="btn btn-primary" onclick="openModal('candidateModal')">+ Add Candidate</button></div>
+              </div>
+
+              <div class="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Candidate</th>
+                      <th>Position</th>
+                      <th>Party</th>
+                      <th>Grade</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="candidateTable"></tbody>
+                </table>
+              </div>
+            </div>
+          <div class="card" id="candidateArchive" style="display:none;margin-top:20px"><div class="card-header"><h3>Candidate Archive</h3><button class="btn" onclick="toggleArchive('candidateArchive')">Close Archive</button></div><div class="table-container"><table><thead><tr><th>Name</th><th>Position</th><th>Election</th><th>Grade</th><th>Party</th><th>Action</th></tr></thead><tbody id="candidateArchiveTable"></tbody></table></div></div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <div class="modal" id="candidateModal">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3>Add Candidate</h3>
+          <button class="close" onclick="closeModal('candidateModal')">×</button>
+        </div>
+
+        <div class="modal-group">
+          <label>Candidate Name</label>
+          <input id="candidateName" placeholder="Enter candidate name" />
+        </div>
+
+        <div class="modal-group">
+          <label>Position</label>
+          <select id="candidatePosition">
+            <option value="1">
+              President
+            </option>
+            <option value="2">
+              Vice President
+            </option>
+            <option value="3">
+              Secretary
+            </option>
+            <option value="4">
+              Treasurer
+            </option>
+            <option value="5">
+              Auditor
+            </option>
+            <option value="6">
+              Peace Officer
+            </option>
+            <option value="7">
+              Public Information Officer
+            </option>
+            <option value="8">
+              Grade Representative
+            </option>
+          </select>
+        </div>
+
+        <div class="modal-group">
+          <label>Election</label>
+          <select id="candidateElection">
+            <option value="">Loading elections...</option>
+          </select>
+        </div>
+
+        <div class="modal-group" id="candidateGradeLevelContainer" style="display:none;">
+          <label>Grade Level</label>
+          <select id="candidateGradeLevel">
+            <option value="7">Grade 7</option>
+            <option value="8">Grade 8</option>
+            <option value="9">Grade 9</option>
+            <option value="10">Grade 10</option>
+            <option value="11">Grade 11</option>
+            <option value="12">Grade 12</option>
+          </select>
+        </div>
+
+        <div class="modal-group">
+          <label>Party / Group</label>
+          <input id="candidateParty" placeholder="Enter party" />
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn" onclick="closeModal('candidateModal')">Cancel</button>
+          <button class="btn btn-primary" onclick="addCandidate()">Add Candidate</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="editCandidateModal">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3>Edit Candidate</h3>
+          <button class="close" type="button" onclick="closeModal('editCandidateModal')">×</button>
+        </div>
+
+        <input type="hidden" id="editCandidateId" />
+
+        <div class="modal-group">
+          <label>Candidate Name</label>
+          <input id="editCandidateName" placeholder="Enter candidate name" />
+        </div>
+
+        <div class="modal-group">
+          <label>Position</label>
+          <select id="editCandidatePosition" onchange="toggleEditCandidateGradeField()">
+            <option value="1">President</option>
+            <option value="2">Vice President</option>
+            <option value="3">Secretary</option>
+            <option value="4">Treasurer</option>
+            <option value="5">Auditor</option>
+            <option value="6">Public Information Officer</option>
+            <option value="7">Peace Officer</option>
+            <option value="8">Grade Representative</option>
+          </select>
+        </div>
+
+        <div class="modal-group">
+          <label>Election</label>
+          <select id="editCandidateElection">
+            <option value="">Loading elections...</option>
+          </select>
+        </div>
+
+        <div class="modal-group" id="editCandidateGradeContainer" style="display:none;">
+          <label>Grade Level</label>
+          <select id="editCandidateGrade">
+            <option value="">Select Grade</option>
+            <option value="7">Grade 7</option>
+            <option value="8">Grade 8</option>
+            <option value="9">Grade 9</option>
+            <option value="10">Grade 10</option>
+            <option value="11">Grade 11</option>
+            <option value="12">Grade 12</option>
+          </select>
+        </div>
+
+        <div class="modal-group">
+          <label>Party / Group</label>
+          <input id="editCandidateParty" placeholder="Enter party" />
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn" type="button" onclick="closeModal('editCandidateModal')">Cancel</button>
+          <button class="btn btn-primary" type="button" onclick="updateCandidate()">Update Candidate</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="../../js/api.js"></script>
+    <script src="../../js/storage.js"></script>
+    <script src="../../js/main.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/admin.js"></script>
+  </body>
+</html>
