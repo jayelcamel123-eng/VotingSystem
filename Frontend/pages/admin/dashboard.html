@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -28,7 +28,7 @@
     </style>
   </head>
   <body>
-    <div id="app" style="display:block;">
+    <div id="app" style="display: block">
       <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
           <div class="sidebar-logo-icon">
@@ -39,13 +39,15 @@
 
         <div class="sidebar-menu">
           <div class="menu-title">Main Menu</div>
-          <button class="menu-item active" onclick="location.href='dashboard.html'">📊 Dashboard</button>
-          <button class="menu-item" onclick="location.href='voters.html'">👥 Voters</button>
-          <button class="menu-item" onclick="location.href='candidates.html'">🧑 Candidates</button>
-          <button class="menu-item" onclick="location.href='elections.html'">🗳️ Elections</button>
-          <button class="menu-item" onclick="location.href='results.html'">📈 Results</button>
-
-          
+          <button class="menu-item active" onclick="location.href = 'dashboard.html'">
+            📊 Dashboard
+          </button>
+          <button class="menu-item" onclick="location.href = 'voters.html'">👥 Voters</button>
+          <button class="menu-item" onclick="location.href = 'candidates.html'">
+            🧑 Candidates
+          </button>
+          <button class="menu-item" onclick="location.href = 'elections.html'">🗳️ Elections</button>
+          <button class="menu-item" onclick="location.href = 'results.html'">📈 Results</button>
         </div>
 
         <button class="logout" onclick="adminLogout()">🚪 Logout</button>
@@ -53,7 +55,7 @@
 
       <main class="main">
         <header class="topbar">
-          <div style="display:flex;align-items:center;gap:15px;">
+          <div style="display: flex; align-items: center; gap: 15px">
             <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
             <h1 class="page-title">Dashboard</h1>
           </div>
@@ -115,24 +117,12 @@
             <div class="card">
               <div class="card-header">
                 <h3>Current Election</h3>
-                <span class="badge badge-yellow" id="currentElectionStatus">
-                  LOADING
-                </span>
+                <span class="badge badge-yellow" id="currentElectionStatus"> LOADING </span>
               </div>
 
-              <h2
-                id="currentElectionName"
-                style="margin-bottom:8px;"
-              >
-                Loading election...
-              </h2>
+              <h2 id="currentElectionName" style="margin-bottom: 8px">Loading election...</h2>
 
-              <p
-                id="currentElectionDates"
-                style="color:#78857d;"
-              >
-                Loading election dates...
-              </p>
+              <p id="currentElectionDates" style="color: #78857d">Loading election dates...</p>
             </div>
 
             <div class="card">
@@ -154,9 +144,7 @@
 
                   <tbody id="recentActivityTable">
                     <tr>
-                      <td colspan="5" style="text-align:center;">
-                        Loading recent activity...
-                      </td>
+                      <td colspan="5" style="text-align: center">Loading recent activity...</td>
                     </tr>
                   </tbody>
                 </table>

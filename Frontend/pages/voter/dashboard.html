@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -151,8 +151,7 @@
   </head>
 
   <body>
-    <div id="voterApp" style="display:block;">
-
+    <div id="voterApp" style="display: block">
       <!-- TOP BAR -->
       <header class="voter-topbar">
         <div class="voter-brand">
@@ -161,30 +160,19 @@
           <div>
             <strong>Student Voting Portal</strong>
 
-            <div style="font-size:12px;color:#78857d;">
-              Web-Based Election System
-            </div>
+            <div style="font-size: 12px; color: #78857d">Web-Based Election System</div>
           </div>
         </div>
 
         <div class="voter-user">
-          <div id="voterMode" class="badge mode-online">
-            ● Online
-          </div>
+          <div id="voterMode" class="badge mode-online">● Online</div>
 
-          <button
-            class="btn btn-danger"
-            onclick="voterLogout()"
-          >
-            Logout
-          </button>
+          <button class="btn btn-danger" onclick="voterLogout()">Logout</button>
         </div>
       </header>
 
-
       <!-- VOTER DASHBOARD -->
       <div id="voterDashboard" class="voter-content">
-
         <!-- WELCOME -->
         <div class="voter-welcome">
           <h2>
@@ -200,120 +188,67 @@
 
           <br />
 
-          <p id="voterConnectionMessage">
-            Checking connection...
-          </p>
+          <p id="voterConnectionMessage">Checking connection...</p>
         </div>
-
 
         <!-- DASHBOARD CARDS -->
         <div class="voter-cards">
-
           <!-- CAST YOUR VOTE -->
           <div class="voter-card">
             <h3>🗳️ Cast Your Vote</h3>
 
-            <p>
-              Vote for your preferred candidates in the Student Council Election 2026.
-            </p>
+            <p>Vote for your preferred candidates in the Student Council Election 2026.</p>
 
-            <button
-              class="btn btn-primary"
-              onclick="openVoterBallot()"
-            >
-              Open Ballot
-            </button>
+            <button class="btn btn-primary" onclick="openVoterBallot()">Open Ballot</button>
           </div>
-
 
           <!-- CURRENT ELECTION -->
           <div class="voter-card">
             <h3>📅 Current Election</h3>
 
             <p>
-              <strong id="currentElectionTitle">
-                Checking...
-              </strong>
+              <strong id="currentElectionTitle"> Checking... </strong>
             </p>
 
             <p>
               Status:
-              <span
-                id="currentElectionStatus"
-                class="badge badge-yellow"
-              >
-                LOADING
-              </span>
+              <span id="currentElectionStatus" class="badge badge-yellow"> LOADING </span>
             </p>
           </div>
-
 
           <!-- VOTING MODE -->
           <div class="voter-card">
             <h3>🌐 Voting Mode</h3>
 
-            <p>
-              The system automatically detects your Internet connection.
-            </p>
+            <p>The system automatically detects your Internet connection.</p>
 
-            <span
-              id="voterModeCard"
-              class="badge mode-online"
-            >
-              Online Mode
-            </span>
+            <span id="voterModeCard" class="badge mode-online"> Online Mode </span>
           </div>
-
         </div>
-
 
         <!-- ELECTION RESULTS -->
         <div class="voter-results-section">
-
           <div class="voter-results-header">
             <h2>📊 Election Results</h2>
 
-            <p>
-              Current election results
-            </p>
+            <p>Current election results</p>
           </div>
-
 
           <!-- RESULT SUMMARY -->
-          <div
-            id="voterResultSummary"
-            class="voter-result-summary"
-          >
-          </div>
-
+          <div id="voterResultSummary" class="voter-result-summary"></div>
 
           <!-- RESULTS -->
           <div id="voterElectionResults">
-
-            <div class="voter-results-empty">
-              Loading election results...
-            </div>
-
+            <div class="voter-results-empty">Loading election results...</div>
           </div>
-
         </div>
-
       </div>
 
-
       <!-- VOTER BALLOT -->
-      <div
-        id="voterBallot"
-        class="voter-content"
-        style="display:none;"
-      >
-
-        <div
-          id="offlineNotice"
-          class="offline-notice"
-          style="display:none;"
-        >
-          📡 You are offline. Your cached ballot may be submitted and synchronized when you reconnect.
+      <div id="voterBallot" class="voter-content" style="display: none">
+        <div id="offlineNotice" class="offline-notice" style="display: none">
+          📡 You are offline. Your cached ballot may be submitted and synchronized when you
+          reconnect.
         </div>
 
         <div id="ballotContainer">
@@ -321,11 +256,8 @@
             <p>Loading ballot...</p>
           </div>
         </div>
-
       </div>
-
     </div>
-
 
     <!-- JAVASCRIPT -->
     <script src="../../js/api.js"></script>
@@ -334,6 +266,5 @@
     <script src="../../js/auth.js"></script>
     <script src="../../js/voter.js"></script>
     <script src="../../js/voting.js"></script>
-
   </body>
 </html>

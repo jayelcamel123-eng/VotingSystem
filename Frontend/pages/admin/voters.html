@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../../css/style.css" />
   </head>
   <body>
-    <div id="app" style="display:block;">
+    <div id="app" style="display: block">
       <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
           <div class="sidebar-logo-icon">
@@ -18,13 +18,15 @@
 
         <div class="sidebar-menu">
           <div class="menu-title">Main Menu</div>
-          <button class="menu-item" onclick="location.href='dashboard.html'">📊 Dashboard</button>
-          <button class="menu-item active" onclick="location.href='voters.html'">👥 Voters</button>
-          <button class="menu-item" onclick="location.href='candidates.html'">🧑 Candidates</button>
-          <button class="menu-item" onclick="location.href='elections.html'">🗳️ Elections</button>
-          <button class="menu-item" onclick="location.href='results.html'">📈 Results</button>
-
-          
+          <button class="menu-item" onclick="location.href = 'dashboard.html'">📊 Dashboard</button>
+          <button class="menu-item active" onclick="location.href = 'voters.html'">
+            👥 Voters
+          </button>
+          <button class="menu-item" onclick="location.href = 'candidates.html'">
+            🧑 Candidates
+          </button>
+          <button class="menu-item" onclick="location.href = 'elections.html'">🗳️ Elections</button>
+          <button class="menu-item" onclick="location.href = 'results.html'">📈 Results</button>
         </div>
 
         <button class="logout" onclick="adminLogout()">🚪 Logout</button>
@@ -32,7 +34,7 @@
 
       <main class="main">
         <header class="topbar">
-          <div style="display:flex;align-items:center;gap:15px;">
+          <div style="display: flex; align-items: center; gap: 15px">
             <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
             <h1 class="page-title">Voter Management</h1>
           </div>
@@ -52,21 +54,14 @@
 
         <div class="content">
           <section class="page active" id="voters">
-
             <div class="card">
               <div class="card-header">
                 <h3>Voter Management</h3>
 
-                <div style="display:flex;gap:8px">
-                  <button
-                    class="btn"
-                    onclick="toggleArchive('voterArchive')">
-                    View Archive
-                  </button>
+                <div style="display: flex; gap: 8px">
+                  <button class="btn" onclick="toggleArchive('voterArchive')">View Archive</button>
 
-                  <button
-                    class="btn btn-primary"
-                    onclick="openModal('voterModal')">
+                  <button class="btn btn-primary" onclick="openModal('voterModal')">
                     + Add Voter
                   </button>
                 </div>
@@ -78,13 +73,20 @@
                   type="text"
                   id="voterSearch"
                   placeholder="Search voter..."
-                  onkeyup="searchVoters()" />
+                  onkeyup="searchVoters()"
+                />
               </div>
 
               <!-- GRADE AND SECTION FILTERS -->
               <div
-                style="display:flex;gap:15px;align-items:end;margin-bottom:20px;flex-wrap:wrap;">
-
+                style="
+                  display: flex;
+                  gap: 15px;
+                  align-items: end;
+                  margin-bottom: 20px;
+                  flex-wrap: wrap;
+                "
+              >
                 <div class="form-group">
                   <label for="voterGrade">Grade</label>
 
@@ -100,14 +102,10 @@
                     <option value="">All Sections</option>
                   </select>
                 </div>
-
               </div>
 
               <!-- ACTIVE VOTERS TABLE -->
-              <div
-                class="table-container"
-                id="voterActiveTableWrap">
-
+              <div class="table-container" id="voterActiveTableWrap">
                 <table>
                   <thead>
                     <tr>
@@ -122,24 +120,15 @@
 
                   <tbody id="voterTable"></tbody>
                 </table>
-
               </div>
             </div>
 
             <!-- ARCHIVE -->
-            <div
-              class="card"
-              id="voterArchive"
-              style="display:none;margin-top:20px">
-
+            <div class="card" id="voterArchive" style="display: none; margin-top: 20px">
               <div class="card-header">
                 <h3>Voter Archive</h3>
 
-                <button
-                  class="btn"
-                  onclick="toggleArchive('voterArchive')">
-                  Close Archive
-                </button>
+                <button class="btn" onclick="toggleArchive('voterArchive')">Close Archive</button>
               </div>
 
               <div class="table-container">
@@ -158,9 +147,7 @@
                   <tbody id="voterArchiveTable"></tbody>
                 </table>
               </div>
-
             </div>
-
           </section>
         </div>
       </main>
@@ -168,36 +155,23 @@
 
     <!-- ADD VOTER MODAL -->
     <div class="modal" id="voterModal">
-
       <div class="modal-box">
-
         <div class="modal-header">
           <h3>Add Voter</h3>
 
-          <button
-            type="button"
-            class="close"
-            onclick="closeModal('voterModal')">
-            ×
-          </button>
+          <button type="button" class="close" onclick="closeModal('voterModal')">×</button>
         </div>
 
         <div class="modal-group">
           <label>Student ID</label>
 
-          <input
-            type="text"
-            id="newStudentID"
-            placeholder="e.g. 1234">
+          <input type="text" id="newStudentID" placeholder="e.g. 1234" />
         </div>
 
         <div class="modal-group">
           <label>Full Name</label>
 
-          <input
-            type="text"
-            id="newVoterName"
-            placeholder="Enter full name">
+          <input type="text" id="newVoterName" placeholder="Enter full name" />
         </div>
 
         <div class="modal-group">
@@ -216,86 +190,58 @@
         <div class="modal-group">
           <label>Section</label>
 
-          <input
-            type="text"
-            id="newSection"
-            placeholder="e.g. ICT-A">
+          <input type="text" id="newSection" placeholder="e.g. ICT-A" />
         </div>
 
         <div class="modal-group">
           <label>Voter Password</label>
 
-          <div style="display:flex; gap:8px;">
-
+          <div style="display: flex; gap: 8px">
             <input
               type="text"
               id="newVoterPassword"
               placeholder="Create voter password"
               autocomplete="new-password"
-              style="flex:1;">
+              style="flex: 1"
+            />
 
             <button
               type="button"
               class="btn"
-              onclick="togglePasswordVisibility('newVoterPassword', this)">
+              onclick="togglePasswordVisibility('newVoterPassword', this)"
+            >
               Hide
             </button>
-
           </div>
         </div>
 
         <div class="modal-actions">
+          <button type="button" class="btn" onclick="closeModal('voterModal')">Cancel</button>
 
-          <button
-            type="button"
-            class="btn"
-            onclick="closeModal('voterModal')">
-            Cancel
-          </button>
-
-          <button
-            type="button"
-            class="btn btn-primary"
-            onclick="addVoter()">
-            Add Voter
-          </button>
-
+          <button type="button" class="btn btn-primary" onclick="addVoter()">Add Voter</button>
         </div>
-
       </div>
     </div>
 
     <!-- EDIT VOTER MODAL -->
     <div class="modal" id="editVoterModal">
-
       <div class="modal-box">
-
         <div class="modal-header">
           <h3>Edit Voter</h3>
 
-          <button
-            type="button"
-            class="close"
-            onclick="closeModal('editVoterModal')">
-            ×
-          </button>
+          <button type="button" class="close" onclick="closeModal('editVoterModal')">×</button>
         </div>
 
         <div class="modal-group">
           <label>Student ID</label>
 
-          <input
-            type="text"
-            id="editVoterID"
-            readonly>
+          <input type="text" id="editVoterID" readonly />
         </div>
 
         <div class="modal-group">
           <label>Full Name</label>
 
-          <input
-            type="text"
-            id="editVoterName">
+          <input type="text" id="editVoterName" />
         </div>
 
         <div class="modal-group">
@@ -314,9 +260,7 @@
         <div class="modal-group">
           <label>Section</label>
 
-          <input
-            type="text"
-            id="editSection">
+          <input type="text" id="editSection" />
         </div>
 
         <div class="modal-group">
@@ -325,27 +269,17 @@
           <input
             type="password"
             id="editVoterPassword"
-            placeholder="Leave blank to keep current password">
+            placeholder="Leave blank to keep current password"
+          />
         </div>
 
         <div class="modal-actions">
+          <button type="button" class="btn" onclick="closeModal('editVoterModal')">Cancel</button>
 
-          <button
-            type="button"
-            class="btn"
-            onclick="closeModal('editVoterModal')">
-            Cancel
-          </button>
-
-          <button
-            type="button"
-            class="btn btn-primary"
-            onclick="updateVoter()">
+          <button type="button" class="btn btn-primary" onclick="updateVoter()">
             Update Voter
           </button>
-
         </div>
-
       </div>
     </div>
 
@@ -354,6 +288,5 @@
     <script src="../../js/main.js"></script>
     <script src="../../js/auth.js"></script>
     <script src="../../js/admin.js"></script>
-
   </body>
 </html>

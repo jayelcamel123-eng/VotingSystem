@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../../css/style.css" />
   </head>
   <body>
-    <div id="app" style="display:block;">
+    <div id="app" style="display: block">
       <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
           <div class="sidebar-logo-icon">
@@ -18,13 +18,13 @@
 
         <div class="sidebar-menu">
           <div class="menu-title">Main Menu</div>
-          <button class="menu-item" onclick="location.href='dashboard.html'">📊 Dashboard</button>
-          <button class="menu-item" onclick="location.href='voters.html'">👥 Voters</button>
-          <button class="menu-item active" onclick="location.href='candidates.html'">🧑 Candidates</button>
-          <button class="menu-item" onclick="location.href='elections.html'">🗳️ Elections</button>
-          <button class="menu-item" onclick="location.href='results.html'">📈 Results</button>
-
-          
+          <button class="menu-item" onclick="location.href = 'dashboard.html'">📊 Dashboard</button>
+          <button class="menu-item" onclick="location.href = 'voters.html'">👥 Voters</button>
+          <button class="menu-item active" onclick="location.href = 'candidates.html'">
+            🧑 Candidates
+          </button>
+          <button class="menu-item" onclick="location.href = 'elections.html'">🗳️ Elections</button>
+          <button class="menu-item" onclick="location.href = 'results.html'">📈 Results</button>
         </div>
 
         <button class="logout" onclick="adminLogout()">🚪 Logout</button>
@@ -32,12 +32,14 @@
 
       <main class="main">
         <header class="topbar">
-          <div style="display:flex;align-items:center;gap:15px;">
+          <div style="display: flex; align-items: center; gap: 15px">
             <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
             <h1 class="page-title">Candidate Management</h1>
           </div>
           <div class="top-right">
-            <div class="system-status"><span class="dot"></span><span id="topStatus">Online</span></div>
+            <div class="system-status">
+              <span class="dot"></span><span id="topStatus">Online</span>
+            </div>
             <div class="admin-profile">
               <div class="avatar">A</div>
               <span class="admin-name">Administrator</span>
@@ -50,7 +52,13 @@
             <div class="card">
               <div class="card-header">
                 <h3>Candidate Management</h3>
-                <div style="display:flex;gap:8px"><button class="btn" onclick="toggleArchive('candidateArchive')">View Archive</button><button class="btn btn-primary" onclick="openModal('candidateModal')">+ Add Candidate</button></div>
+                <div style="display: flex; gap: 8px">
+                  <button class="btn" onclick="toggleArchive('candidateArchive')">
+                    View Archive</button
+                  ><button class="btn btn-primary" onclick="openModal('candidateModal')">
+                    + Add Candidate
+                  </button>
+                </div>
               </div>
 
               <div class="table-container">
@@ -69,7 +77,29 @@
                 </table>
               </div>
             </div>
-          <div class="card" id="candidateArchive" style="display:none;margin-top:20px"><div class="card-header"><h3>Candidate Archive</h3><button class="btn" onclick="toggleArchive('candidateArchive')">Close Archive</button></div><div class="table-container"><table><thead><tr><th>Name</th><th>Position</th><th>Election</th><th>Grade</th><th>Party</th><th>Action</th></tr></thead><tbody id="candidateArchiveTable"></tbody></table></div></div>
+            <div class="card" id="candidateArchive" style="display: none; margin-top: 20px">
+              <div class="card-header">
+                <h3>Candidate Archive</h3>
+                <button class="btn" onclick="toggleArchive('candidateArchive')">
+                  Close Archive
+                </button>
+              </div>
+              <div class="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Position</th>
+                      <th>Election</th>
+                      <th>Grade</th>
+                      <th>Party</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="candidateArchiveTable"></tbody>
+                </table>
+              </div>
+            </div>
           </section>
         </div>
       </main>
@@ -90,30 +120,14 @@
         <div class="modal-group">
           <label>Position</label>
           <select id="candidatePosition">
-            <option value="1">
-              President
-            </option>
-            <option value="2">
-              Vice President
-            </option>
-            <option value="3">
-              Secretary
-            </option>
-            <option value="4">
-              Treasurer
-            </option>
-            <option value="5">
-              Auditor
-            </option>
-            <option value="6">
-              Peace Officer
-            </option>
-            <option value="7">
-              Public Information Officer
-            </option>
-            <option value="8">
-              Grade Representative
-            </option>
+            <option value="1">President</option>
+            <option value="2">Vice President</option>
+            <option value="3">Secretary</option>
+            <option value="4">Treasurer</option>
+            <option value="5">Auditor</option>
+            <option value="6">Peace Officer</option>
+            <option value="7">Public Information Officer</option>
+            <option value="8">Grade Representative</option>
           </select>
         </div>
 
@@ -124,7 +138,7 @@
           </select>
         </div>
 
-        <div class="modal-group" id="candidateGradeLevelContainer" style="display:none;">
+        <div class="modal-group" id="candidateGradeLevelContainer" style="display: none">
           <label>Grade Level</label>
           <select id="candidateGradeLevel">
             <option value="7">Grade 7</option>
@@ -183,7 +197,7 @@
           </select>
         </div>
 
-        <div class="modal-group" id="editCandidateGradeContainer" style="display:none;">
+        <div class="modal-group" id="editCandidateGradeContainer" style="display: none">
           <label>Grade Level</label>
           <select id="editCandidateGrade">
             <option value="">Select Grade</option>
@@ -202,8 +216,12 @@
         </div>
 
         <div class="modal-actions">
-          <button class="btn" type="button" onclick="closeModal('editCandidateModal')">Cancel</button>
-          <button class="btn btn-primary" type="button" onclick="updateCandidate()">Update Candidate</button>
+          <button class="btn" type="button" onclick="closeModal('editCandidateModal')">
+            Cancel
+          </button>
+          <button class="btn btn-primary" type="button" onclick="updateCandidate()">
+            Update Candidate
+          </button>
         </div>
       </div>
     </div>
